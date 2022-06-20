@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentTeacher" class="edit-form">
+  <div v-if="!submitted" class="edit-form">
     <h4>Teacher</h4>
     <h1>{{ currentTeacher.id }}</h1>
     <form>
@@ -25,7 +25,7 @@
       <div class="form-group">
         <label for="age">Age</label>
         <input
-          type="text"
+          type="number"
           class="form-control"
           id="age"
           v-model="currentTeacher.age"
@@ -72,13 +72,20 @@
     <button type="submit" class="badge badge-success" @click="updateTeacher">
       Update
     </button>
-    <p>{{ message }}</p>
   </div>
 
-  <!-- <div v-else>
-    <br />
-    <p>Please click on a Tutorial...</p>
-  </div> -->
+  <div v-else class="edit-form">
+    <div>
+      <label><strong>Name:</strong></label> {{ currentTeacher.name }} <br />
+      <label><strong>Designation:</strong></label>
+      {{ currentTeacher.designation }}
+      <br />
+      <label><strong>Age:</strong></label> {{ currentTeacher.age }} <br />
+      <label><strong>Presence:</strong></label>
+      {{ currentTeacher.presence ? "Present" : "Absent" }}
+    </div>
+    <h4>{{ message }}</h4>
+  </div>
 </template>
 
 <script>
@@ -89,6 +96,7 @@ export default {
     return {
       currentTeacher: null,
       message: "",
+      submitted: false,
     };
   },
   methods: {
@@ -123,7 +131,8 @@ export default {
       TeacherDataService.update(this.currentTeacher.id, this.currentTeacher)
         .then((response) => {
           console.log(response.data);
-          this.message = "The tutorial was updated successfully!";
+          this.submitted = !this.submitted;
+          this.message = "The Teacher was updated successfully!";
         })
         .catch((e) => {
           console.log(e);
@@ -133,6 +142,8 @@ export default {
       TeacherDataService.delete(this.currentTeacher.id)
         .then((response) => {
           console.log(response.data);
+          this.submitted = !this.submitted;
+          this.message = "The Teacher was deleted successfully!";
           // this.$router.push({ name: "tutorials" });
         })
         .catch((e) => {
@@ -141,7 +152,7 @@ export default {
     },
   },
   mounted() {
-    this.message = "#";
+    this.message = "";
     this.getTutorial(this.$route.params.id);
   },
 };

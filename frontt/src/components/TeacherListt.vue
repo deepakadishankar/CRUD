@@ -2,6 +2,9 @@
   <div class="list row">
     <div class="col-md-6">
       <h4>Teachers List</h4>
+      <div v-if="teachers.length == 0" class="alert alert-danger" role="alert">
+        No Teacher entry to show!
+      </div>
       <ul class="list-group">
         <li
           class="list-group-item"
@@ -13,14 +16,14 @@
           {{ teacher.name }}
         </li>
       </ul>
-      <button class="m-3 btn btn-sm btn-danger" @click="removeAllTutorials">
+      <button class="m-3 btn btn-sm btn-danger" @click="removeAllTeachers">
         Remove All
       </button>
     </div>
     <div class="col-md-6">
       <div class="col-md-6">
         <div v-if="currentTeacher">
-          <h4>Tutorial</h4>
+          <h4>Teacher</h4>
           <div>
             <label><strong>Name:</strong></label> {{ currentTeacher.name }}
           </div>
@@ -41,7 +44,7 @@
         </div>
         <div v-else>
           <br />
-          <p>Please click on a Tutorial...</p>
+          <p>Please click on a Teacher...</p>
         </div>
       </div>
     </div>
@@ -74,7 +77,7 @@ export default {
       this.currentTeacher = null;
       this.currentIndex = -1;
     },
-    removeAllTutorials() {
+    removeAllTeachers() {
       TeacherDataService.deleteAll()
         .then((response) => {
           console.log(response.data);

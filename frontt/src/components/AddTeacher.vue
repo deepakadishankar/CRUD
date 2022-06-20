@@ -5,19 +5,21 @@
         <label for="name">Name</label>
         <input
           type="text"
+          minlength="5"
           class="form-control"
           id="name"
-          required
+          required="true"
           v-model="teacher.name"
           name="name"
         />
+        <p v-if="validatedName"></p>
       </div>
       <div class="form-group">
         <label for="designation">Designation</label>
         <input
           class="form-control"
           id="designation"
-          required
+          required="required"
           v-model="teacher.designation"
           name="designation"
         />
@@ -25,6 +27,7 @@
       <div class="form-group">
         <label for="age">Age</label>
         <input
+          type="text"
           class="form-control"
           id="age"
           required
@@ -42,16 +45,30 @@
           v-model="teacher.presence"
           name="presence"
         />
-        <!-- <b-form-group v-model="teacher.presence" id="presence" name="presence">
-          <b-form-checkbox for="presence">Presence</b-form-checkbox>
-        </b-form-group> -->
-        <!-- </div> -->
+      </div>
+      <div v-if="error">
+        <div class="alert alert-danger" role="alert">
+          <p>Submission failed!</p>
+          {{ this.errorMessage }}
+        </div>
       </div>
       <button @click="saveteacher" class="btn btn-success">Submit</button>
     </div>
     <div v-else>
-      <h4>You submitted successfully!</h4>
-      <button class="btn btn-success" @click="newteacher">Add</button>
+      <div>
+        <label><strong>Name:</strong></label> {{ teacher.name }} <br />
+        <label><strong>Designation:</strong></label> {{ teacher.designation }}
+        <br />
+        <label><strong>Age:</strong></label> {{ teacher.age }} <br />
+        <label><strong>Presence:</strong></label>
+        {{ teacher.presence ? "Present" : "Absent" }}
+      </div>
+
+      <div class="alert alert-success" role="alert">
+        You submitted successfully!
+      </div>
+
+      <button class="btn btn-success" @click="newteacher">Add Another</button>
     </div>
   </div>
 </template>
@@ -69,6 +86,8 @@ export default {
         presence: false,
       },
       submitted: false,
+      error: false,
+      errorMessage: "",
     };
   },
   methods: {
@@ -86,6 +105,8 @@ export default {
           this.submitted = true;
         })
         .catch((e) => {
+          this.errorMessage = e;
+          this.error = !this.error;
           console.log(e);
         });
     },

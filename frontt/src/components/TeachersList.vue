@@ -1,85 +1,41 @@
 <template>
   <div class="list row">
-    <div class="col-md-8">
-      <div class="input-group mb-3">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Search by title"
-          v-model="title"
-        />
-        <div class="input-group-append">
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            @click="searchTitle"
-          >
-            Search
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <h4>Tutorials List</h4>
+    <div class="col-md-12">
+      <h4>Teachers List</h4>
+      <p v-if="teachers.length == 0">No Teacher entires to show</p>
       <ul class="list-group">
         <li
           class="list-group-item"
           :class="{ active: index == currentIndex }"
-          v-for="(tutorial, index) in tutorials"
+          v-for="(teacher, index) in teachers"
           :key="index"
-          @click="setActiveTutorial(tutorial, index)"
+          @click="setActiveTeacher(teacher, index)"
         >
-          {{ tutorial.title }}
+          {{ teacher.name }}
         </li>
       </ul>
-      <button class="m-3 btn btn-sm btn-danger" @click="removeAllTutorials">
+      <button class="m-3 btn btn-sm btn-danger" @click="removeAllTeachers">
         Remove All
       </button>
-    </div>
-    <div class="col-md-6">
-      <div v-if="currentTutorial">
-        <h4>Tutorial</h4>
-        <div>
-          <label><strong>Title:</strong></label> {{ currentTutorial.title }}
-        </div>
-        <div>
-          <label><strong>Description:</strong></label>
-          {{ currentTutorial.description }}
-        </div>
-        <div>
-          <label><strong>Status:</strong></label>
-          {{ currentTutorial.published ? "Published" : "Pending" }}
-        </div>
-        <router-link
-          :to="'/tutorials/' + currentTutorial.id"
-          class="badge badge-warning"
-          >Edit</router-link
-        >
-      </div>
-      <div v-else>
-        <br />
-        <p>Please click on a Tutorial...</p>
-      </div>
     </div>
   </div>
 </template>
 <script>
-import TeacherDataService from "../services/TeacherDataService";
+import TeacherDataService from "@/services/TeacherDataService";
 export default {
-  name: "tutorials-list",
+  name: "TeacherListt",
   data() {
     return {
-      tutorials: [],
-      currentTutorial: null,
+      teachers: [],
+      currentTeacher: null,
       currentIndex: -1,
-      title: "",
     };
   },
   methods: {
-    retrieveTutorials() {
+    retrieveTeachers() {
       TeacherDataService.getAll()
         .then((response) => {
-          this.tutorials = response.data;
+          this.teachers = response.data;
           console.log(response.data);
         })
         .catch((e) => {
@@ -87,15 +43,11 @@ export default {
         });
     },
     refreshList() {
-      this.retrieveTutorials();
-      this.currentTutorial = null;
+      this.retrieveTeachers();
+      this.currentTeacher = null;
       this.currentIndex = -1;
     },
-    setActiveTutorial(tutorial, index) {
-      this.currentTutorial = tutorial;
-      this.currentIndex = tutorial ? index : -1;
-    },
-    removeAllTutorials() {
+    removeAllTeachers() {
       TeacherDataService.deleteAll()
         .then((response) => {
           console.log(response.data);
@@ -105,28 +57,13 @@ export default {
           console.log(e);
         });
     },
-
-    searchTitle() {
-      TeacherDataService.findByTitle(this.title)
-        .then((response) => {
-          this.tutorials = response.data;
-          this.setActiveTutorial(null);
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+    setActiveTeacher(teacher, index) {
+      this.currentTeacher = teacher;
+      this.currentIndex = teacher ? index : -1;
     },
   },
   mounted() {
-    this.retrieveTutorials();
+    this.retrieveTeachers();
   },
 };
 </script>
-<style>
-.list {
-  text-align: left;
-  max-width: 750px;
-  margin: auto;
-}
-</style>
